@@ -28,6 +28,7 @@ dependencies {
   implementation 'org.plumelib:options:2.0.3'
 
   compileOnly "com.google.errorprone:error_prone_annotations:${errorproneVersion}"
+  errorprone("com.google.errorprone:error_prone_core:${errorproneVersion}")
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -75,9 +76,6 @@ spotless {
 
 /// Error Prone linter
 
-dependencies {
-  errorprone("com.google.errorprone:error_prone_core:${errorproneVersion}")
-}
 tasks.withType(JavaCompile).configureEach {
   // "-processing" avoids javac warning "No processor claimed any of these annotations".
   options.compilerArgs << '-Xlint:all,-processing' << '-Werror'
