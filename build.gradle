@@ -124,11 +124,11 @@ checkerFramework {
 // To use a snapshot version of the Checker Framework.
 if (false) {
   // TODO: Change the above test to false when CF is released.
-  ext.checkerFrameworkVersion = '3.44.0'
+  ext.checkerFrameworkVersion = '3.42.0-eisop3'
   dependencies {
-    compileOnly "org.checkerframework:checker-qual:${checkerFrameworkVersion}"
-    testCompileOnly "org.checkerframework:checker-qual:${checkerFrameworkVersion}"
-    checkerFramework "org.checkerframework:checker:${checkerFrameworkVersion}"
+    compileOnly "io.github.eisop:checker-qual:${checkerFrameworkVersion}"
+    testCompileOnly "io.github.eisop:checker-qual:${checkerFrameworkVersion}"
+    checkerFramework "io.github.eisop:checker:${checkerFrameworkVersion}"
   }
   configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'minutes'
