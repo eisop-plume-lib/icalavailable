@@ -3,7 +3,7 @@ plugins {
   id 'application'
 
   // To create a fat jar build/libs/...-all.jar, run: ./gradlew shadowJar
-  id 'com.github.johnrengelman.shadow' version '8.1.1'
+  id 'com.gradleup.shadow' version '8.3.5'
 
   // Code formatting; defines targets "spotlessApply" and "spotlessCheck"
   // Requires JDK 11 or higher; the plugin crashes under JDK 8.
@@ -13,7 +13,7 @@ plugins {
   id('net.ltgt.errorprone') version '4.1.0'
 
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.6.45'
+  id 'org.checkerframework' version '0.6.47'
 }
 
 repositories {
@@ -21,14 +21,19 @@ repositories {
   maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
-ext.errorproneVersion = '2.31.0'
+ext {
+  errorproneVersion = '2.36.0'
+  isJava17orHigher = JavaVersion.current() >= JavaVersion.VERSION_17
+  isJava21orHigher = JavaVersion.current() >= JavaVersion.VERSION_21
+}
 
 dependencies {
+  // ical4j version 4 deprecates its own date representation and uses java.time.* instead.  This
+  // requires massive refactorings in client code (such as icalavailable).  ical4j provides no
+  // migration guidance, and not even an acknowledgment of the change in its relase notes.  So,
+  // don't bother to upgrade.
   implementation 'org.mnode.ical4j:ical4j:2.2.7'
   implementation 'org.plumelib:options:2.0.3'
-
-  compileOnly "com.google.errorprone:error_prone_annotations:${errorproneVersion}"
-  errorprone("com.google.errorprone:error_prone_core:${errorproneVersion}")
 
   testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -74,7 +79,12 @@ spotless {
   }
 }
 
-/// Error Prone linter
+// Error Prone linter
+
+dependencies {
+  compileOnly "com.google.errorprone:error_prone_annotations:${errorproneVersion}"
+  errorprone("com.google.errorprone:error_prone_core:${errorproneVersion}")
+}
 
 tasks.withType(JavaCompile).configureEach {
   // "-processing" avoids javac warning "No processor claimed any of these annotations".
@@ -83,9 +93,10 @@ tasks.withType(JavaCompile).configureEach {
     disable('ExtendsObject')  // Incorrect when using the Checker Framework
     disable('ReferenceEquality') // Use Interning Checker instead.
   }
+  options.errorprone.enabled = isJava17orHigher
 }
 
-/// Checker Framework pluggable type-checking
+// Checker Framework pluggable type-checking
 
 apply plugin: 'org.checkerframework'
 
@@ -142,7 +153,7 @@ checkerFramework {
   ]
 }
 
-/// Javadoc
+// Javadoc
 
 // Turn Javadoc warnings into errors.
 javadoc {
@@ -209,7 +220,7 @@ task updateUserOptions(type: Javadoc, dependsOn: 'assemble') {
   title = ''
 }
 
-/// Emacs support
+// Emacs support
 
 /* Make Emacs TAGS table */
 task tags(type: Exec) {
