@@ -7,13 +7,13 @@ plugins {
 
   // Code formatting; defines targets "spotlessApply" and "spotlessCheck"
   // Requires JDK 11 or higher; the plugin crashes under JDK 8.
-  id 'com.diffplug.spotless' version '6.25.0'
+  id 'com.diffplug.spotless' version '7.0.1'
 
   // Error Prone linter
-  id('net.ltgt.errorprone') version '4.1.0'
+  id 'net.ltgt.errorprone' version '4.1.0'
 
   // Checker Framework pluggable type-checking
-  id 'org.checkerframework' version '0.6.45'
+  id 'org.checkerframework' version '0.6.48'
 }
 
 repositories {
@@ -62,7 +62,7 @@ spotless {
 
     // define the steps to apply to those files
     trimTrailingWhitespace()
-    indentWithSpaces(2)
+    leadingTabsToSpaces(2)
     endWithNewline()
   }
   java {
@@ -73,7 +73,7 @@ spotless {
   groovyGradle {
     target '**/*.gradle'
     greclipse()  // which formatter Spotless should use to format .gradle files.
-    indentWithSpaces(2)
+    leadingTabsToSpaces(2)
     trimTrailingWhitespace()
     // endWithNewline() // Don't want to end empty files with a newline
   }
@@ -115,6 +115,7 @@ if (true) {
 dependencies {
   compileOnly "io.github.eisop:checker-qual:${checkerFrameworkVersion}"
   testCompileOnly "io.github.eisop:checker-qual:${checkerFrameworkVersion}"
+  checkerFramework "io.github.eisop:checker-qual:${checkerFrameworkVersion}"
   checkerFramework "io.github.eisop:checker:${checkerFrameworkVersion}"
 }
 
