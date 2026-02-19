@@ -55,8 +55,8 @@ import org.plumelib.options.Options;
  *   <li id="option:date"><b>--date=</b><i>string</i>. First date to summarize. [default: today]
  *   <li id="option:days"><b>--days=</b><i>int</i>. Number of calendar days to summarize. [default:
  *       8]
- *   <li id="option:iCal-URL"><b>--iCal-URL=</b><i>url</i> <code>[+]</code>. For a Google calendar:
- *       go to settings, then click on the green "ICAL" icon for the "private address".
+ *   <li id="option:iCal-URL"><b>--iCal-URL=</b><i>url</i> {@code [+]}. For a Google calendar: go to
+ *       settings, then click on the green "ICAL" icon for the "private address".
  *   <li id="option:business-hours"><b>--business-hours=</b><i>string</i>. A list of time ranges,
  *       expressed as a String. Example: 9am-5pm,7:30pm-9:30pm [default: 9am-5pm]
  *   <li id="option:timezone1"><b>--timezone1=</b><i>timezone</i>. Time zone as an Olson timezone
@@ -68,11 +68,12 @@ import org.plumelib.options.Options;
  *       [default: false]
  * </ul>
  *
- * <code>[+]</code> means option can be specified multiple times
+ * {@code [+]} means option can be specified multiple times
  * <!-- end options doc -->
  * If you are perplexed because of odd results, maybe it is because of the transparency of your iCal
  * items (this shows up as "available/busy" in Google calendar).
  */
+@SuppressWarnings("PMD") // todo
 public final class ICalAvailable {
 
   /** This class is a collection of methods; it does not represent anything. */
@@ -100,7 +101,7 @@ public final class ICalAvailable {
   @Option("<url> schedule in iCal format")
   public static List<String> iCal_URL = new ArrayList<>();
 
-  /** A list of time ranges, expressed as a String. Example: 9am-5pm,7:30pm-9:30pm */
+  /** A list of time ranges, expressed as a String. Example: 9am-5pm,7:30pm-9:30pm. */
   @Option("time ranges during which appointments are permitted")
   public static String business_hours = "9am-5pm";
 
@@ -171,13 +172,12 @@ public final class ICalAvailable {
   // Procedures
 
   /**
-   * Reads command-line options and sets fields
+   * Reads command-line options and sets fields.
    *
    * @param args the command-line options
    */
   @SuppressWarnings({
     "deprecation", // for iCal4j's use of Date.{get,set}Minutes
-    "StringSplitter" // don't add dependence on Guava
   })
   @EnsuresNonNull("tz1")
   static void processOptions(String[] args) {
@@ -267,8 +267,8 @@ public final class ICalAvailable {
       }
     }
 
-    for (String range : business_hours.split(",")) {
-      String[] startEnd = range.split("-");
+    for (String range : business_hours.split(",", -1)) {
+      String[] startEnd = range.split("-", -1);
       if (startEnd.length != 2) {
         System.err.println("Bad time range: " + range);
         System.exit(1);
@@ -464,7 +464,8 @@ public final class ICalAvailable {
     for (Object p : pl) {
       assert p != null
           : "@AssumeAssertion(nullness): non-generic container class; elements are non-null";
-      result.append(rangeString((Period) p, tz) + "\n");
+      result.append(rangeString((Period) p, tz));
+      result.append('\n');
     }
     return result.toString();
   }
@@ -495,7 +496,7 @@ public final class ICalAvailable {
   // TODO:  don't propose times that are before the current moment.
 
   /**
-   * Return a all the times that are available on a single day.
+   * Returns a all the times that are available on a single day.
    *
    * @param day the day on which to look for availability
    * @param calendars the calendars that might contain conflicts
