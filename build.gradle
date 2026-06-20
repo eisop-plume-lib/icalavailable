@@ -65,6 +65,14 @@ java {
 }
 
 test {
+  // Run tests on the JDK specified by testJavaVersion (e.g., from CI matrix),
+  // while keeping the Gradle daemon on the JDK set by org.gradle.java.home.
+  if (project.hasProperty('testJavaVersion')) {
+    javaLauncher = javaToolchains.launcherFor {
+      languageVersion = JavaLanguageVersion.of(project.property('testJavaVersion') as Integer)
+    }
+  }
+
   useJUnitPlatform {
     includeEngines("junit-jupiter")
     excludeEngines("junit-vintage")

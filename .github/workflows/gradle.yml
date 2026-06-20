@@ -35,11 +35,11 @@ jobs:
       - name: Version information
         run: java -version && ./gradlew -version
       - name: ./gradlew build
-        run: ./gradlew build
+        run: ./gradlew build -PtestJavaVersion=${{ matrix.java }}
       - name: Setup local CF
         run: ./.setup-CF.sh
       - name: ./gradlew -PcfLocal build
-        run: ./gradlew -PcfLocal build
+        run: ./gradlew -PcfLocal build -PtestJavaVersion=${{ matrix.java }}
       - name: ./gradlew requireJavadoc
         run: ./gradlew requireJavadoc
       - name: ./gradlew spotlessCheck
